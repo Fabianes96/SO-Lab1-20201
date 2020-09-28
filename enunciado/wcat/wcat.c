@@ -21,7 +21,7 @@ int showFile(char *fileName) {
     FILE *fp = fopen(fileName, "r");
 
     if (fp == NULL) {
-        printf("wcat: cannot open file\n\n");
+        printf("wcat: cannot open file\n");
         return 1;
     }
     char c;
@@ -31,7 +31,6 @@ int showFile(char *fileName) {
     }
 
     fclose(fp);
-    printf("\n");
 
     return 0;
 }
