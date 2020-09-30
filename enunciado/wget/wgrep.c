@@ -2,70 +2,87 @@
 #include <stdlib.h>
 #include <string.h>
 
-int wgrepFunction(char termino[], char *fileName);
-int wgrepByInput(char termino[], _IO_FILE* io);
+#define n 1000
 
-int main(int argc, char *argv[]) {
-    if(argc == 1 ){
+int wgrepFunction(char termino[], char *fileName);
+int wgrepByInput(char termino[]);
+
+int main(int argc, char *argv[])
+{
+    /*Casos para wgrep*/
+    if (argc == 1)
+    {
         printf("wgrep: searchterm [file ...]\n");
         return 1;
-    }    
-    // if(argc ==2){
-    //    if (wgrepByInput(argv[1], stdin) == 1) {
-    //             return 1;
-    //     } 
-    // }
-    if (argc > 2) {
-        for (int i = 2; i < argc; i++) {
-            if (wgrepFunction(argv[1], argv[i]) == 1) {
+    }
+    if (argc == 2)
+    {
+        if (wgrepByInput(argv[1]) == 1)
+        {
+            return 1;
+        }
+    }
+    if (argc > 2)
+    {
+        for (int i = 2; i < argc; i++)
+        {
+            if (wgrepFunction(argv[1], argv[i]) == 1)
+            {
                 return 1;
             }
         }
     }
     return 0;
 }
-// int wgrepByInput (char termino[], _IO_FILE* io){
-    
-//     char* str = NULL;
-//     char c;
-//     while (c!= EOF) {
-//         c = fgets(str, io);
-//         printf("%c", c);
-//     }
-//        fclose(io);
+int wgrepByInput(char termino[])
+{
+    /*Variable para guardar la entrada por teclado*/
+    char str[n];
+    /*Ciclo para la entrada por teclado. Se sale con ctrl+c*/
+    while (fgets(str, n, stdin))
+    {
+        /*Evalua si el termino está en la linea */
+        if (strstr(str, termino) != NULL)
+        {
+            printf("%s", str);
+        }
+    }
+    return 0;
+}
 
-//     return 0;
-// }
-
-int wgrepFunction(char termino[], char *fileName) {
+int wgrepFunction(char termino[], char *fileName)
+{
+    /*Variables para el manejo del archivo*/
     FILE *fp = fopen(fileName, "r");
-    char *line_buf = NULL;
-    size_t line_buf_size = 0;
-    int line_count = 0;
-    ssize_t line_size;
-    if (fp == NULL) {
+    char *linea = NULL;
+    size_t tamano = 0;
+    int contador = 0;
+    ssize_t contadorDeLinea;
+    /*Evalua si el archivo no existe...*/
+    if (fp == NULL)
+    {
         printf("wgrep: cannot open file\n");
         return 1;
-    }    
-
-    line_size = getline(&line_buf, &line_buf_size, fp);
-    /* Loop through until we are done with the file. */
-    while (line_size >= 0)
-    {
-        /* Increment our line count */
-        line_count++;
-        if(strstr(line_buf, termino) != NULL){
-            printf("%s", line_buf);
-        }
-        /* Get the next line */
-        line_size = getline(&line_buf, &line_buf_size, fp);
     }
-    /* Free the allocated line buffer */
-    free(line_buf);
-    line_buf = NULL;    
-
-    /* Close the file now that we are done with it */
-    fclose(fp);    
+    /*Obtiene el numero de linea*/
+    contadorDeLinea = getline(&linea, &tamano, fp);
+    /* Ciclo que recorre todo el archivo */
+    while (contadorDeLinea >= 0)
+    {
+        /* Incrementa el contador */
+        contador++;
+        /*Evalua si el termino está en la linea */
+        if (strstr(linea, termino) != NULL)
+        {
+            printf("%s", linea);
+        }
+        /* Siguiente linea del archivo */
+        contadorDeLinea = getline(&linea, &tamano, fp);
+    }
+    /*Libera el buffer asignado y cierra el archivo*/
+    free(linea);
+    linea = NULL;
+    fclose(fp);
 
     return 0;
-}   
+}
