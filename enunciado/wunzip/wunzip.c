@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
             wunzipFunction(argv[i]);
         }
     }    
-    return 0;
+    
 }
 int wunzipFunction(char *fileName)
 {
